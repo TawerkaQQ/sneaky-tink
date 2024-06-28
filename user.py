@@ -4,8 +4,6 @@ import requests
 from tinkoff.invest import Client, services, schemas
 from tinkoff.invest.schemas import PortfolioRequest, PortfolioResponse
 
-token = 't.wiOBWDjwSg9c9MQQeG5DSWu8NWn3BzvKHn91DzrTrbw_rFNOStU_6wKAZV4MRMed_r3XnvT4cPidUfxEIvnK9g'
-
 
 class user_info:
     def __init__(self, token):
