@@ -1,3 +1,4 @@
 .idea/
 venv/
 settings/.env
+settings/__pycache__/
