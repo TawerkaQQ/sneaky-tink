@@ -1,15 +1,17 @@
 import os
 import requests
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from tinkoff.invest import Client, services, schemas
 from tinkoff.invest.schemas import PortfolioRequest, PortfolioResponse
 from tinkoff.invest.services import OperationsService
+from settings.settings import TOKEN, PORTFOLIO_NAME
 
 
-class UserInfo:
-    def __init__(self, token):
-        self.token = token
-        self.id = None
+class User:
+    def __init__(self):
+        pass
 
     def get_acc_info(self):
 
@@ -23,10 +25,19 @@ class UserInfo:
         access_level=<AccessLevel.ACCOUNT_ACCESS_LEVEL_FULL_ACCESS: 1>)])
         """
 
-        with Client(self.token) as client:
-            accounts = client.users.get_accounts()
-            self.id = accounts.accounts[0].id
-        return accounts
+        with Client(TOKEN) as client:
+            accounts = client.users.get_accounts().accounts
+            for account in accounts:
+                if account.name == PORTFOLIO_NAME:
+                    print(account.id)
+                    print(type(account))
+                    return account
+        '''
+        Ввел параметр PORTFOLIO_NAME, так как у меня например 3 портфеля: личный, инвесткопилка, стратегия.
+        Нужно решить что с этим делать, нужен ли параметр, так как работа планируется только с одним портфелем, но 
+        все равно нужно где-то держать название портфеля.
+        '''
+        return None
 
     def get_user_info(self):
 
@@ -38,8 +49,12 @@ class UserInfo:
         tariff='investor')
         """
 
-        with Client(self.token) as client:
+        with Client(TOKEN) as client:
             user_info = client.users.get_info()
+            print(user_info)
+            '''
+            Не знаю понадобится ли этот метод, насколько это нужная инфа? -> на обсуждение
+            '''
         return user_info
 
     def get_margin_info(self):
@@ -47,6 +62,7 @@ class UserInfo:
         """
         :return:
         Маржинальность портфеля, у меня такой функции нет в портфеле, но она работает.
+        А мне кажется нам это не нужно - не буду проверять.
         """
 
         with Client(self.token) as client:
@@ -63,21 +79,21 @@ class UserInfo:
         futures - Список фьючерсов портфеля.
         options - Список опционов портфеля.
         """
-
-        with Client(self.token) as client:
-            operations_service = OperationsService(channel, metadata)
-            portfolio = operations_service.get_portfolio(account_id=self.id)
-            print(portfolio)
-
+        account = self.get_acc_info()
+        with Client(TOKEN) as client:
+            #operations_service = OperationsService(channel, metadata)
+            #portfolio = operations_service.get_portfolio(account_id=self.id)
+            portfolio = client.operations.get_portfolio(account_id=account.id)
+            print(type(portfolio))
+            print(portfolio.total_amount_shares)
+        '''
+        Не трогаю твой код. Мне кажется, то что я нашел больше подходит к портфелю. Посмотри объект 
+        schemas.PortfolioResponse и его аттрибуты и уточни что конкретно ты нашел.
+        '''
         return portfolio
 
 
 if __name__ == "__main__":
-    token = ''
-    user = UserInfo(token)
-    acc = user.get_acc_info()
-    print(acc)
-    user_info = user.get_user_info()
-    print(user_info)
-    portfolio = user.get_portfolio()
-    print(portfolio)
+    user = User()
+    user.get_portfolio()
+
