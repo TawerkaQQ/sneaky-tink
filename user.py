@@ -5,7 +5,7 @@ from tinkoff.invest import Client, services, schemas
 from tinkoff.invest.schemas import PortfolioRequest, PortfolioResponse
 
 
-class user_info:
+class UserInfo:
     def __init__(self, token):
         self.token = token
         self.id = None
