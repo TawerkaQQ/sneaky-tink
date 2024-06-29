@@ -1,0 +1,2 @@
+tinkoff-api >= 1.19
+tinkoff-investments >= 0.2.0b102
